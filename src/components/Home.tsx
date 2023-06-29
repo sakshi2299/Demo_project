@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Typography, TextField, Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 
 interface Item {
   id: number;
@@ -20,8 +22,8 @@ const Home = () => {
   };
 
   const handleEdit = (id: number) => {
-    const itemToEdit:any = data.find((item) => item.id === id);
-    setEditItem(itemToEdit);
+    const itemToEdit: Item | undefined = data.find((item) => item.id === id);
+    setEditItem(itemToEdit || null);
     setNewItem(itemToEdit?.name || '');
   };
 
@@ -41,39 +43,38 @@ const Home = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ marginBottom: '10px' }}>Home</h2>
+      <Typography variant="h4" sx={{ marginBottom: '10px' }}>TO</Typography>
 
-      <input
+      <TextField
         type="text"
         value={newItem}
         onChange={(e) => setNewItem(e.target.value)}
         placeholder="Enter a new item"
-        style={{ marginBottom: '10px', padding: '5px', width: '20%' }}
+        style={{ marginBottom: '10px', width: '20%' }}
       />
       {editItem ? (
-        <button style={{ marginRight: '10px' }} onClick={handleUpdate}>
-          Update
-        </button>
+        <Button variant="contained" style={{ marginRight: '10px' }} onClick={handleUpdate}>Update</Button>
       ) : (
-        <button style={{ marginRight: '10px' }} onClick={handleAdd}>
-          Add
-        </button>
+        <Button variant="contained" style={{ marginRight: '10px' }} onClick={handleAdd}>Add</Button>
       )}
-      <ul style={{ listStyleType: 'none', padding: 0 }}>
+      <List style={{ padding: 0 }}>
         {data.map((item) => (
-          <li key={item.id} style={{ marginBottom: '10px' }}>
-            {item.name}
-            <button style={{ marginLeft: '15px' }} onClick={() => handleEdit(item.id)}>
-              Edit
-            </button>
-            <button style={{ marginLeft: '15px' }} onClick={() => handleDelete(item.id)}>
-              Delete
-            </button>
-          </li>
+          <ListItem key={item.id} style={{ marginBottom: '10px' }}>
+            <ListItemText primary={item.name} />
+            <ListItemSecondaryAction>
+              <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(item.id)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(item.id)}>
+                <DeleteIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   );
 };
 
 export default Home;
+
