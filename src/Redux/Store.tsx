@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import userSlice, { UserState } from './userSlice';
+import userSlice from './userSlice';
 
-interface RootState {
-  user: UserState;
-}
+// interface RootState {
+//   user: UserState;
+// }
 
 const store = configureStore({
   reducer: {

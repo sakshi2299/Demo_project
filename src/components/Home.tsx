@@ -1,80 +1,87 @@
 import React, { useState } from 'react';
-import { Typography, TextField, Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Container, Typography, Select, FormControl, MenuItem, Grid, TextField } from '@mui/material';
+import TaskList from './TaskList';
+import TaskForm from './TaskForm';
 
-interface Item {
+export interface Task {
   id: number;
-  name: string;
+  title: string;
+  status: string;
 }
 
-const Home = () => {
-  const [data, setData] = useState<Item[]>([]);
-  const [newItem, setNewItem] = useState('');
-  const [editItem, setEditItem] = useState<Item | null>(null);
+const Home: React.FC = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [filter, setFilter] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const handleAdd = () => {
-    const newItemData: Item = {
-      id: Date.now(),
-      name: newItem,
-    };
-    setData([...data, newItemData]);
-    setNewItem('');
+  const createTask = (task: Task) => {
+    setTasks([...tasks, task]);
   };
 
-  const handleEdit = (id: number) => {
-    const itemToEdit: Item | undefined = data.find((item) => item.id === id);
-    setEditItem(itemToEdit || null);
-    setNewItem(itemToEdit?.name || '');
+  const updateTask = (taskId: number, updatedTask: Task) => {
+    const updatedTasks = tasks.map(task => (task.id === taskId ? updatedTask : task));
+    setTasks(updatedTasks);
   };
 
-  const handleUpdate = () => {
-    const updatedData = data.map((item) =>
-      item.id === editItem?.id ? { ...item, name: newItem } : item
-    );
-    setData(updatedData);
-    setNewItem('');
-    setEditItem(null);
+  const deleteTask = (taskId: number) => {
+    const updatedTasks = tasks.filter(task => task.id !== taskId);
+    setTasks(updatedTasks);
   };
 
-  const handleDelete = (id: number) => {
-    const updatedData = data.filter((item) => item.id !== id);
-    setData(updatedData);
+  const filterTasks = (selectedFilter: string) => {
+    setFilter(selectedFilter);
   };
+
+  const searchTasks = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const filteredTasks = tasks.filter((task: Task) => {
+    if (filter === 'All') {
+      return true;
+    } else if (filter === 'Completed') {
+      return task.status.toLowerCase() === 'completed';
+    } else if (filter === 'Pending') {
+      return task.status.toLowerCase() === 'pending';
+    }
+    return true;
+  });
+
+  const searchedTasks = filteredTasks.filter(task =>
+    task.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Typography variant="h4" sx={{ marginBottom: '10px' }}>TO</Typography>
-
-      <TextField
-        type="text"
-        value={newItem}
-        onChange={(e) => setNewItem(e.target.value)}
-        placeholder="Enter a new item"
-        style={{ marginBottom: '10px', width: '20%' }}
-      />
-      {editItem ? (
-        <Button variant="contained" style={{ marginRight: '10px' }} onClick={handleUpdate}>Update</Button>
-      ) : (
-        <Button variant="contained" style={{ marginRight: '10px' }} onClick={handleAdd}>Add</Button>
-      )}
-      <List style={{ padding: 0 }}>
-        {data.map((item) => (
-          <ListItem key={item.id} style={{ marginBottom: '10px' }}>
-            <ListItemText primary={item.name} />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(item.id)}>
-                <EditIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(item.id)}>
-                <DeleteIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-      </List>
-    </div>
+    <Container maxWidth="md">
+      <Typography variant="h4" gutterBottom>
+        Task Management App
+      </Typography>
+      <TaskForm createTask={createTask} />
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} sm={6}>
+          <FormControl fullWidth>
+            <Typography variant="subtitle1">Filter:</Typography>
+            <Select value={filter} onChange={e => filterTasks(e.target.value)}>
+              <MenuItem value="All">All</MenuItem>
+              <MenuItem value="Completed">Completed</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControl fullWidth>
+            <Typography variant="subtitle1">Search:</Typography>
+            <TextField
+              value={searchQuery}
+              onChange={e => searchTasks(e.target.value)}
+              placeholder="Search task..."
+            />
+          </FormControl>
+        </Grid>
+      </Grid>
+      <TaskList tasks={searchedTasks} updateTask={updateTask} deleteTask={deleteTask} />
+    </Container>
   );
 };
 
 export default Home;
-

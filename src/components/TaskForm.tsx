@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Task } from '../utils/tasks';
+import { Task } from '../utils/Tasks';
+import { TextField, Button, Grid } from '@mui/material';
 
 interface TaskFormProps {
   createTask: (task: Task) => void;
@@ -23,13 +24,22 @@ const TaskForm: React.FC<TaskFormProps> = ({ createTask }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Enter task title"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-      />
-      <button type="submit">Add Task</button>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} sm={9}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            label="Enter task title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12} sm={3}>
+          <Button fullWidth variant="contained" color="primary" type="submit">
+            Add Task
+          </Button>
+        </Grid>
+      </Grid>
     </form>
   );
 };

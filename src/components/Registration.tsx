@@ -56,6 +56,7 @@ const Registration: React.FC = () => {
     if (isValid) {
       const user: any = { name, email, password };
       dispatch(setCurrentUser(user));
+      localStorage.setItem('regi','')
       setName('');
       setEmail('');
       setPassword('');

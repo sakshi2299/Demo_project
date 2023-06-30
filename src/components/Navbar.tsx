@@ -1,10 +1,6 @@
 import React from 'react';
-import { Route, Link, Routes, useNavigate } from 'react-router-dom';
+import {  Link, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, createTheme, ThemeProvider } from '@mui/material';
-import Login from './Login';
-import Registration from './Registration';
-import Home from './Home';
-import Protected from './Protected';
 
 const Navbar = () => {
   const isLoggedIn = localStorage.getItem('login') === 'true';
@@ -29,7 +25,7 @@ const Navbar = () => {
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              CRUD
+              TASK MANAGEMENT
             </Typography>
             {isLoggedIn && (
               <Button color="inherit" component={Link} to="/">
@@ -53,11 +49,7 @@ const Navbar = () => {
             )}
           </Toolbar>
         </AppBar>
-        <Routes>
-          <Route path="/" element={<Protected Component={Home} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registration" element={<Registration />} />
-        </Routes>
+
       </>
     </ThemeProvider>
   );
